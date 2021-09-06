@@ -11,6 +11,6 @@ sudo mkdir -p /data/zookeeper
 
 # Downloading and Extracting Zookeeper binaries
 cd /opt
-sudo wget https://dlcdn.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3.tar.gz
+sudo curl https://dlcdn.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3.tar.gz -o apache-zookeeper-3.6.3.tar.gz
 sudo tar -xvf apache-zookeeper-3.6.3.tar.gz
-sudo ln -s apache-zookeeper-3.6.3.tar.gz zookeeper
+sudo ln -s apache-zookeeper-3.6.3 zookeeper

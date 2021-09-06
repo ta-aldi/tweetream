@@ -33,14 +33,9 @@ bash scripts/stop_kafka_service.sh
 bash scripts/install_zookeeper.sh
 ```
 
-- Start Zookeeper Service
+- Setup Zookeeper Service
 ```
-bash scripts/start_zookeeper_service.sh
-```
-
-- Stop Zookeeper Service
-```
-bash scripts/stop_zookeeper_service.sh
+bash scripts/setup_zookeeper_service.sh
 ```
 
 - Change the Zookeeper Configuration if needed
@@ -53,6 +48,16 @@ nano /opt/zookeeper/conf/zoo.cfg
 ```
 vi /data/zookeeper/myid
 nano /data/zookeeper/myid
+```
+
+- Start Zookeeper Service
+```
+bash scripts/start_zookeeper_service.sh
+```
+
+- Stop Zookeeper Service
+```
+bash scripts/stop_zookeeper_service.sh
 ```
 
 ### Kafka Installation
