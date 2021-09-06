@@ -7,35 +7,48 @@
 echo "Please run this script as superuser!"
 read -p 'Username (which used to installed kafka before): ' USERNAME
 echo ""
+read -p 'Generate kafka service only (without Zookeeper)? [y/n]: ' KAFKAONLY
+echo ""
 
 if [ -d "/home/$USERNAME" ]; then
 
-  # check if zookeeper.service file is already created, the service file will be created if not.
-  # ZOOSERVICE=/etc/systemd/system/zookeeper.service
-  ZOOSERVICE=/etc/systemd/system/zookeeper.service
-  if [ -f "$ZOOSERVICE" ]; then
-    echo "$ZOOSERVICE found."
-  else
-    touch $ZOOSERVICE
+  DEPENDENCIES="network.target remote-fs.target"
 
-    echo "[Unit]" >> $ZOOSERVICE
-    echo "Requires=network.target remote-fs.target" >> $ZOOSERVICE
-    echo "After=network.target remote-fs.target" >> $ZOOSERVICE
-    echo "" >> $ZOOSERVICE
+  if [ "$KAFKAONLY" = "n" ]; then
+    # check if zookeeper.service file is already created, the service file will be created if not.
+    # ZOOSERVICE=/etc/systemd/system/zookeeper.service
+    ZOOSERVICE=/etc/systemd/system/zookeeper.service
+    if [ -f "$ZOOSERVICE" ]; then
+      echo "$ZOOSERVICE found."
+    else
+      touch $ZOOSERVICE
 
-    echo "[Service]" >> $ZOOSERVICE
-    echo "Type=simple" >> $ZOOSERVICE
-    echo "User=$USERNAME" >> $ZOOSERVICE
-    echo "ExecStart=/home/$USERNAME/kafka/bin/zookeeper-server-start.sh /home/$USERNAME/kafka/config/zookeeper.properties" >> $ZOOSERVICE
-    echo "ExecStop=/home/$USERNAME/kafka/bin/zookeeper-server-stop.sh" >> $ZOOSERVICE
-    echo "Restart=on-abnormal" >> $ZOOSERVICE
-    echo "" >> $ZOOSERVICE
+      echo "[Unit]" >> $ZOOSERVICE
+      echo "Requires=$DEPENDENCIES" >> $ZOOSERVICE
+      echo "After=$DEPENDENCIES" >> $ZOOSERVICE
+      echo "" >> $ZOOSERVICE
 
-    echo "[Install]" >> $ZOOSERVICE
-    echo "WantedBy=multi-user.target" >> $ZOOSERVICE
+      echo "[Service]" >> $ZOOSERVICE
+      echo "Type=simple" >> $ZOOSERVICE
+      echo "User=$USERNAME" >> $ZOOSERVICE
+      echo "ExecStart=/home/$USERNAME/kafka/bin/zookeeper-server-start.sh /home/$USERNAME/kafka/config/zookeeper.properties" >> $ZOOSERVICE
+      echo "ExecStop=/home/$USERNAME/kafka/bin/zookeeper-server-stop.sh" >> $ZOOSERVICE
+      echo "Restart=on-abnormal" >> $ZOOSERVICE
+      echo "" >> $ZOOSERVICE
 
-    echo "$ZOOSERVICE created."
-  fi
+      echo "[Install]" >> $ZOOSERVICE
+      echo "WantedBy=multi-user.target" >> $ZOOSERVICE
+
+      echo "$ZOOSERVICE created."
+
+    fi
+
+    DEPENDENCIES="zookeeper.service"
+
+    sudo systemctl start zookeeper
+    sudo systemctl enable zookeeper
+
+  fi  
 
   # check if kafka.service file is already created, the service file will be created if not.
   # KAFKASERVICE=/etc/systemd/system/kafka.service
@@ -46,8 +59,8 @@ if [ -d "/home/$USERNAME" ]; then
     touch $KAFKASERVICE
 
     echo "[Unit]" >> $KAFKASERVICE
-    echo "Requires=zookeeper.service" >> $KAFKASERVICE
-    echo "After=zookeeper.service" >> $KAFKASERVICE
+    echo "Requires=$DEPENDENCIES" >> $KAFKASERVICE
+    echo "After=$DEPENDENCIES" >> $KAFKASERVICE
     echo "" >> $KAFKASERVICE
 
     echo "[Service]" >> $KAFKASERVICE
