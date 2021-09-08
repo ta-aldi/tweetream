@@ -28,37 +28,7 @@ bash scripts/stop_kafka_service.sh
 
 ## [Production] Installation Setup
 ### Zookeeper Installation
-- Install Zookeeper
-```
-bash scripts/install_zookeeper.sh
-```
-
-- Setup Zookeeper Service
-```
-bash scripts/setup_zookeeper_service.sh
-```
-
-- Change the Zookeeper Configuration if needed
-```
-vi /opt/zookeeper/conf/zoo.cfg
-nano /opt/zookeeper/conf/zoo.cfg
-```
-
-- Adjust current Zookeeper ID (for multi-node Zookeepers)
-```
-vi /data/zookeeper/myid
-nano /data/zookeeper/myid
-```
-
-- Start Zookeeper Service
-```
-bash scripts/start_zookeeper_service.sh
-```
-
-- Stop Zookeeper Service
-```
-bash scripts/stop_zookeeper_service.sh
-```
+- See scripts/zookeeper/zookeeper.txt for installation.
 
 ### Kafka Installation
 - Install Kafka
