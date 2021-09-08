@@ -7,7 +7,7 @@ Michael Susanto
 ## [Development] Installation Setup
 - Install Kafka
 ```
-bash scripts/install_kafka.sh
+bash scripts/old_install_kafka.sh
 ```
 
 - Configure Kafka & Zookeeper Properties
@@ -18,12 +18,12 @@ vi ~/kafka/config/zookeeper.properties
 
 - Start Kafka & Zookeeper Services
 ```
-bash scripts/start_kafka_service.sh
+bash scripts/old_start_kafka_service.sh
 ```
 
 - Stop Kafka & Zookeeper Services
 ```
-bash scripts/stop_kafka_service.sh
+bash scripts/kafka/5_stop_kafka_service.sh
 ```
 
 ## [Production] Installation Setup
@@ -31,22 +31,5 @@ bash scripts/stop_kafka_service.sh
 - See scripts/zookeeper/zookeeper.txt for installation.
 
 ### Kafka Installation
-- Install Kafka
-```
-bash scripts/install_kafka.sh
-```
-
-- Configure Kafka Properties
-```
-vi ~/kafka/config/server.properties
-```
-
-- Start Kafka Services
-```
-bash scripts/start_kafka_service.sh
-```
-
-- Stop Kafka Services
-```
-bash scripts/stop_kafka_service.sh
-```
+- See scripts/kafka/kafka.txt for installation.
+- For multi-node configuration, see example on scripts/server.properties
