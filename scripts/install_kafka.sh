@@ -17,4 +17,4 @@ mkdir ~/kafka && cd ~/kafka
 tar -xvzf ~/Downloads/kafka.tgz --strip 1
 
 echo "Done."
-echo "See https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-20-04 for more details. (Start from Step 3)"
+echo "See https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-debian-10 for more details. (Start from Step 3)"

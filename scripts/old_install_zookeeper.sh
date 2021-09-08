@@ -6,6 +6,9 @@
 
 # Please run this script as superuser!
 
+# Installing java as one of Zookeeper dependencies
+sudo apt update && sudo apt -y install default-jdk
+
 # Create a data directory for Zookeeper
 sudo mkdir -p /data/zookeeper
 
