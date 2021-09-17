@@ -16,8 +16,10 @@ def acked(err, msg):
     else:
         print("Message produced: %s" % (str(msg)))
 
-producer.produce(os.getenv('TOPICS_PUB'), key="key", value="Hello Kafka", callback=acked)
+for i in range(10):
+    producer.produce(os.getenv('TOPICS_PUB'), key="key", value="Hello Kafka", callback=acked)
+    # Wait up to 1 second for events. Callbacks will be invoked during
+    # this method call if the message is acknowledged.
+    producer.poll(1)
 
-# Wait up to 1 second for events. Callbacks will be invoked during
-# this method call if the message is acknowledged.
-producer.poll(1)
+producer.flush()
