@@ -1,3 +1,4 @@
 **/env
-**/sample_kafka
+**/sample_kafka/*.py
 **/__pycache__
+**/common/config.py
