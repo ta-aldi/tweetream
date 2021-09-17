@@ -30,7 +30,9 @@ def basic_consume_loop(consumer, topics):
 
         while running:
             msg = consumer.poll(timeout=1.0)
-            if msg is None: continue
+            if msg is None:
+                print('No Message')
+                continue
 
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
