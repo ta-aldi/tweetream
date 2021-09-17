@@ -1,4 +1,9 @@
 from confluent_kafka import Consumer
+from dotenv import load_dotenv
+import os
+
+# Load dotenv library
+load_dotenv()
 
 def commit_completed(err, partitions):
     if err:
@@ -6,8 +11,8 @@ def commit_completed(err, partitions):
     else:
         print("Committed partition offsets: " + str(partitions))
 
-conf = {'bootstrap.servers': "x.x.x.x:9092,x.x.x.x:9092,x.x.x.x:9092",
-        'group.id': "foo",
+conf = {'bootstrap.servers': os.getenv('KAFKA_SERVERS'),
+        'group.id': os.getenv('GROUP_ID'),
         'default.topic.config': {'auto.offset.reset': 'smallest'},
         'on_commit': commit_completed}
 
@@ -43,4 +48,4 @@ def basic_consume_loop(consumer, topics):
 def shutdown():
     running = False
 
-basic_consume_loop(consumer, ['TutorialTopic'])
+basic_consume_loop(consumer, [os.getenv('TOPICS_SUB')])

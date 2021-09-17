@@ -1,23 +1,31 @@
-# def hehe():
-#     print("hehe")
-
-# TEST = "test"
 from confluent_kafka import Consumer, Producer
-import socket
+from dotenv import load_dotenv
+import socket, os
 
-BOOTSTRAP_SERVERS = "x.x.x.x:9092,x.x.x.x:9092,x.x.x.x:9092"
+# Load dotenv library
+load_dotenv()
 
+# Callbacks
+## Callback when consumer committed partition offsets
+def commit_completed(err, partitions):
+    if err:
+        print(str(err))
+    else:
+        print("Committed partition offsets: " + str(partitions))
+
+# Configurations
+BOOTSTRAP_SERVERS = os.getenv('KAFKA_SERVERS')
+GROUP_ID = os.getenv('GROUP_ID')
 CONSUMER_CONF = {
     'bootstrap.servers': BOOTSTRAP_SERVERS,
-    'group.id': "foo",
-    'default.topic.config': {'auto.offset.reset': 'smallest'},
-    'on_commit': commit_completed
+    'group.id': GROUP_ID,
+    'default.topic.config': {'auto.offset.reset': 'smallest'}
 }
-
 PRODUCER_CONF = {
     'bootstrap.servers': BOOTSTRAP_SERVERS,
     'client.id': socket.gethostname()
 }
 
+# Consumer & Producer Client
 consumer = Consumer(CONSUMER_CONF)
 producer = Producer(PRODUCER_CONF)

@@ -1,7 +1,11 @@
 from confluent_kafka import Producer
-import socket
+from dotenv import load_dotenv
+import socket, os
 
-conf = {'bootstrap.servers': "x.x.x.x:9092,x.x.x.x:9092,x.x.x.x:9092",
+# Load dotenv library
+load_dotenv()
+
+conf = {'bootstrap.servers': os.getenv('KAFKA_SERVERS'),
         'client.id': socket.gethostname()}
 
 producer = Producer(conf)
@@ -12,7 +16,7 @@ def acked(err, msg):
     else:
         print("Message produced: %s" % (str(msg)))
 
-producer.produce('TutorialTopic', key="key", value="Hello Kafka", callback=acked)
+producer.produce(os.getenv('TOPICS_PUB'), key="key", value="Hello Kafka", callback=acked)
 
 # Wait up to 1 second for events. Callbacks will be invoked during
 # this method call if the message is acknowledged.
