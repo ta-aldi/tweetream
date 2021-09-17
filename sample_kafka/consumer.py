@@ -6,7 +6,7 @@ def commit_completed(err, partitions):
     else:
         print("Committed partition offsets: " + str(partitions))
 
-conf = {'bootstrap.servers': "35.239.209.233:9092",
+conf = {'bootstrap.servers': "x.x.x.x:9092,x.x.x.x:9092,x.x.x.x:9092",
         'group.id': "foo",
         'default.topic.config': {'auto.offset.reset': 'smallest'},
         'on_commit': commit_completed}
