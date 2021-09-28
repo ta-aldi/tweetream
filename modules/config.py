@@ -13,6 +13,13 @@ def commit_completed(err, partitions):
     else:
         print("Committed partition offsets: " + str(partitions))
 
+## Callback when producer produced messages
+def acked(err, msg):
+    if err is not None:
+        print("Failed to deliver message: %s: %s" % (str(msg), str(err)))
+    else:
+        print("Message produced: %s" % (str(msg)))
+
 # Configurations
 BOOTSTRAP_SERVERS = os.getenv('KAFKA_SERVERS')
 GROUP_ID = os.getenv('GROUP_ID')
