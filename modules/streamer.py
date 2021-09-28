@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from preprocessor import Preprocessor
+from config import TweetreamProducer, PRODUCER_CONF, acked
 import os, tweepy
 
 # Load dotenv library
@@ -9,7 +10,7 @@ load_dotenv()
 class Stream(tweepy.Stream):
 
     # Initialize Preprocessor Object
-    def __init__(self, auth, preprocessor):
+    def __init__(self, auth, preprocessor, producer):
         super(Stream, self).__init__(
             auth['TW_API_KEY'],
             auth['TW_API_KEY_SECRET'],
@@ -17,11 +18,13 @@ class Stream(tweepy.Stream):
             auth['TW_ACCESS_TOKEN_SECRET']
         )
         self.preprocessor = preprocessor
+        self.producer = producer
 
     # Process the text of any tweet that comes from the Twitter API
     def on_status(self, status):
         preprocessed = self.preprocessor.run(status.text)
-        print(preprocessed)
+        self.producer.produce('TWCleaned', preprocessed.encode('utf-8'), callback=acked)
+        self.producer.flush()
 
     # The Twitter API will send a 420 status code if we’re being rate limited -> disconnect
     def on_error(self, status_code):
@@ -42,11 +45,11 @@ auth = {
 }
 
 # Create stream object with given credentials
-stream = Stream(auth, Preprocessor())
+stream = Stream(auth, Preprocessor(), TweetreamProducer(PRODUCER_CONF))
 
 # Streaming filter
 stream.filter(
     track=[
-        "Mahasiswa"
+        "#Sticker4thWin"
     ]
 )
