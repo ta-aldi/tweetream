@@ -34,5 +34,28 @@ PRODUCER_CONF = {
 }
 
 # Consumer & Producer Client
-consumer = Consumer(CONSUMER_CONF)
-producer = Producer(PRODUCER_CONF)
+class TweetreamConsumer(Consumer):
+    
+    def __init__(self, config):
+        super(TweetreamConsumer, self).__init__(config)
+
+    def listen(self, processor):
+        while True:
+            msg = self.poll(1.0)
+
+            if msg is None:
+                continue
+            if msg.error():
+                print("Consumer error: {}".format(msg.error()))
+                continue
+
+            processor(msg.value().decode('utf-8'))
+
+
+class TweetreamProducer(Producer):
+    
+    def __init__(self, config):
+        super(TweetreamProducer, self).__init__(config)
+
+consumer = TweetreamConsumer(CONSUMER_CONF)
+producer = TweetreamProducer(PRODUCER_CONF)
