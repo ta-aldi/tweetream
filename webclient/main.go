@@ -2,10 +2,9 @@ package main
 
 import (
 	"github.com/beego/beego/v2/server/web"
-	"github.com/michaelsusanto81/tweetream/webclient/controller"
+	_ "github.com/michaelsusanto81/tweetream/webclient/routers"
 )
 
 func main() {
-	web.Router("/", &controller.MainController{})
 	web.Run()
 }
