@@ -12,6 +12,7 @@
             <h5 class="card-header">{{$tweet.Type}}</h5>
             <div class="card-body">
                 <h5 class="card-title">{{$tweet.Username}}</h5>
+                <p class="text-muted">{{$tweet.CreatedAt}}</p>
                 <p class="card-text">{{$tweet.Tweet}}</p>
             </div>
         </div>
