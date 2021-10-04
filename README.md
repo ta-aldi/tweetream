@@ -33,3 +33,20 @@ bash scripts/kafka/5_stop_kafka_service.sh
 ### Kafka Installation
 - See scripts/kafka/kafka.txt for installation.
 - For multi-node configuration, see example on scripts/server.properties
+
+### Web Server Installation
+- Install dependencies
+```
+go mod vendor
+```
+
+- Build & Run Project (Linux & Unix)
+```
+make go_run_web
+```
+
+- Build & Run Project (Windows or without **make** command)
+```
+go build -o bin/webclient main.go
+go run main.go
+```
