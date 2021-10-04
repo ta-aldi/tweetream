@@ -1,10 +1,8 @@
 package models
 
-import "time"
-
 type Tweet struct {
-	Username  string
-	Tweet     string
-	Type      string
-	CreatedAt time.Time
+	Username  string `json:"username"`
+	Tweet     string `json:"text"`
+	Type      string `json:"prediction"`
+	CreatedAt string `json:"created_at"`
 }
