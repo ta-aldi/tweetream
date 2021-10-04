@@ -1,6 +1,6 @@
 from joblib import load
 from config import TweetreamConsumer, TweetreamProducer, CONSUMER_CONF, PRODUCER_CONF, acked
-import os
+import os, json
 
 class Classifier():
 
@@ -12,9 +12,11 @@ class Classifier():
         self.consumer.subscribe(['TWCleaned'])
 
     # classify
-    def run(self, text):
-        prediction = self.model.predict([text])[0]
-        self.producer.produce('TWClassified', prediction.encode('utf-8'), callback=acked)
+    def run(self, raw_data):
+        data = json.loads(raw_data)
+        data['prediction'] = self.model.predict([data['text_cleaned']])[0]
+        data = json.dumps(data)
+        self.producer.produce('TWClassified', data.encode('utf-8'), callback=acked)
 
     def listen(self):
         self.consumer.listen(self.run)
