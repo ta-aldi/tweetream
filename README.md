@@ -47,6 +47,5 @@ make go_run_web
 
 - Build & Run Project (Windows or without **make** command)
 ```
-go build -o bin/webclient main.go
-go run main.go
+go build -o bin/webclient main.go && go run main.go
 ```

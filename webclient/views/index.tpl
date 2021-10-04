@@ -4,23 +4,18 @@
     <head>
         <title>Beego</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     </head>
     <body>
-        <header class="hero-unit" style="background-color:#A9F16C">
-            <div class="container">
-                <div class="row">
-                    <div class="hero-text">
-                        <h1>Welcome to Beego!</h1>
-                        <p class="description">
-                            Beego is a simple & powerful Go web framework which is inspired by tornado and sinatra.
-                            <br />
-                            Official website: <a href="http://{{.Website}}">{{.Website}}</a>
-                            <br />
-                            Contact me: {{.Email}}
-                        </p>
-                    </div>
-                </div>
+        {{range $tweet := .tweets}}
+        <div class="card">
+            <h5 class="card-header">{{$tweet.Type}}</h5>
+            <div class="card-body">
+                <h5 class="card-title">{{$tweet.Username}}</h5>
+                <p class="card-text">{{$tweet.Tweet}}</p>
             </div>
-        </header>
+        </div>
+        {{end}}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
     </body>
 </html>
