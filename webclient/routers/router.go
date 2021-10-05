@@ -7,4 +7,5 @@ import (
 
 func init() {
 	web.Router("/", &controllers.MainController{})
+	web.Router("/ws", &controllers.WebSocketController{}, "get:Connect")
 }

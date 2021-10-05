@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Beego</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container"></div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+        <script defer>
+            (
+                function() {
+                    // Create a socket
+                    socket = new WebSocket('ws://' + window.location.host + '/ws')
+                    socket.onmessage = function (event) {
+                        const data = JSON.parse(event.data)
+
+                        const card = document.createElement("div")
+                        card.classList.add("card")
+                        
+                        const cardHeader = document.createElement("h5")
+                        cardHeader.classList.add("card-header")
+                        cardHeader.innerHTML = data["prediction"]
+
+                        const cardBody = document.createElement("div")
+                        cardBody.classList.add("card-body")
+
+                        const cardUsername = document.createElement("h5")
+                        cardUsername.classList.add("card-title")
+                        cardUsername.innerHTML = data["username"]
+
+                        const cardCreatedAt = document.createElement("p")
+                        cardCreatedAt.classList.add("text-muted")
+                        cardCreatedAt.innerHTML = data["created_at"]
+
+                        const cardTweet = document.createElement("p")
+                        cardTweet.classList.add("card-text")
+                        cardTweet.innerHTML = data["text"]
+
+                        cardBody.appendChild(cardUsername)
+                        cardBody.appendChild(cardCreatedAt)
+                        cardBody.appendChild(cardTweet)
+                        card.appendChild(cardHeader)
+                        card.appendChild(cardBody)
+                        document.getElementsByClassName("container")[0].prepend(card)
+                    }
+                    socket.onopen = function (_) {
+                        console.log("onopen")
+                    }
+                    socket.onclose = function (_) {
+                        console.log("onclose")
+                    }
+                    socket.onerror = function (_) {
+                        console.log("onerror")
+                    }
+                }
+            )();
+        </script>
+    </body>
+</html>
