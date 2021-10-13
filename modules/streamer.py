@@ -64,6 +64,7 @@ stream = Stream(auth, Preprocessor(), TweetreamProducer(PRODUCER_CONF))
 # Streaming filter
 stream.filter(
     track=[
-        "Money"
-    ]
+        "Mahasiswa"
+    ],
+    filter_level="low"
 )
