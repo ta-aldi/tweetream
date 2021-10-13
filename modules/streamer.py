@@ -36,6 +36,10 @@ class Stream(tweepy.Stream):
         self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
         self.producer.flush()
 
+    # On Connect event
+    def on_connect(self):
+        print("Connected to Twitter Streaming API")
+
     # The Twitter API will send a 420 status code if we’re being rate limited -> disconnect
     def on_error(self, status_code):
         if status_code == 420:
@@ -60,6 +64,6 @@ stream = Stream(auth, Preprocessor(), TweetreamProducer(PRODUCER_CONF))
 # Streaming filter
 stream.filter(
     track=[
-        "#Sticker9thWin"
+        "Money"
     ]
 )

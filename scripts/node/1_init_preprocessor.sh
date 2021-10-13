@@ -1,6 +1,8 @@
 #!/bin/bash
 # Created by Michael Susanto (@michaelsusanto81)
 
+sudo apt-get install -y python3-pip python-devel librdkafka-devel
+
 # 1. create preprocessor service file
 PREPRCSRSERVICE=/etc/systemd/system/preprocessor.service
 TWEETREAM=/home/$USER/tweetream
