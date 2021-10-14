@@ -19,9 +19,7 @@ else
 
     echo "[Service]" >> $WEBSERVICE
     echo "Type=simple" >> $WEBSERVICE
-    echo "ExecStart=cd $TWEETREAM/webclient && go mod vendor && make go_run_web" >> $WEBSERVICE
-    echo "TimeoutSec=30" >> $WEBSERVICE
-    echo "Restart=on-failure" >> $WEBSERVICE
+    echo "ExecStart=bash $TWEETREAM/scripts/node/webclient.sh" >> $WEBSERVICE
     echo "" >> $WEBSERVICE
 
     echo "[Install]" >> $WEBSERVICE
