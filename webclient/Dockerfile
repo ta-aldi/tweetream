@@ -13,19 +13,19 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -v -o bin/webclient main.go
+RUN go build -v -o /docker-webclient main.go
 
 ##
 ## Deploy
 ##
-FROM gcr.io/distroless/base-debian10
+# FROM gcr.io/distroless/base-debian10
 
-WORKDIR /
+# WORKDIR /
 
-COPY --from=build bin/webclient bin/webclient
+# COPY --from=build /docker-webclient /docker-webclient
 
 EXPOSE 8080
 
-USER nonroot:nonroot
+# USER nonroot:nonroot
 
-ENTRYPOINT ["./bin/webclient"]
+ENTRYPOINT ["/docker-webclient"]
