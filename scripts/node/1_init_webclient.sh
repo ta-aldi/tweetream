@@ -5,7 +5,7 @@ sudo apt-get install -y git librdkafka-dev golang-go build-essential
 
 # 1. create webclient service file
 WEBSERVICE=/etc/systemd/system/webclient.service
-TWEETREAM=/home/michael/tweetream
+TWEETREAM=/home/michael/go/src/github.com/michaelsusanto81/tweetream
 if [ -f $WEBSERVICE ]; then
     echo "$WEBSERVICE found."
 else
