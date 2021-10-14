@@ -5,7 +5,7 @@ sudo apt-get install -y python3-pip python3-dev librdkafka-dev
 
 # 1. create preprocessor service file
 PREPRCSRSERVICE=/etc/systemd/system/preprocessor.service
-TWEETREAM=/home/$USER/tweetream
+TWEETREAM=/home/michael/tweetream
 if [ -f $PREPRCSRSERVICE ]; then
     echo "$PREPRCSRSERVICE found."
 else
@@ -19,9 +19,7 @@ else
 
     echo "[Service]" >> $PREPRCSRSERVICE
     echo "Type=simple" >> $PREPRCSRSERVICE
-    echo "ExecStart=pip3 install -r $TWEETREAM/modules/requirements.txt && python3 $TWEETREAM/modules/preprocessor.py" >> $PREPRCSRSERVICE
-    echo "TimeoutSec=30" >> $PREPRCSRSERVICE
-    echo "Restart=on-failure" >> $PREPRCSRSERVICE
+    echo "ExecStart=bash $TWEETREAM/scripts/node/preprocessor.sh" >> $PREPRCSRSERVICE
     echo "" >> $PREPRCSRSERVICE
 
     echo "[Install]" >> $PREPRCSRSERVICE
