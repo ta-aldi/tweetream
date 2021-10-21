@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from preprocessor import Preprocessor
 from config import TweetreamProducer, PRODUCER_CONF, acked
-import os, tweepy, json
+import os, tweepy, json, sys
 
 # Load dotenv library
 load_dotenv()
@@ -63,8 +63,6 @@ stream = Stream(auth, Preprocessor(), TweetreamProducer(PRODUCER_CONF))
 
 # Streaming filter
 stream.filter(
-    track=[
-        "Mahasiswa"
-    ],
+    track=sys.argv[1:],
     filter_level="low"
 )
