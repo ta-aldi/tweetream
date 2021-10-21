@@ -1,4 +1,5 @@
 from confluent_kafka import Consumer, Producer
+from confluent_kafka.admin import AdminClient
 from dotenv import load_dotenv
 import socket, os
 
@@ -32,6 +33,7 @@ PRODUCER_CONF = {
     'bootstrap.servers': BOOTSTRAP_SERVERS,
     'client.id': socket.gethostname()
 }
+ADMIN_CONF = {'bootstrap.servers': BOOTSTRAP_SERVERS}
 
 # Consumer & Producer Client
 class TweetreamConsumer(Consumer):
@@ -59,3 +61,5 @@ class TweetreamProducer(Producer):
 
 consumer = TweetreamConsumer(CONSUMER_CONF)
 producer = TweetreamProducer(PRODUCER_CONF)
+admin = AdminClient(ADMIN_CONF)
+excluded_topics = os.getenv('EXCLUDE_TOPICS').split(',')

@@ -62,4 +62,4 @@ auth = {
 
 # Create preprocessor objects along and give initial keyword tags
 preprocessor = Preprocessor()
-preprocessor.register_tags(['jakarta', 'macet'])
+# preprocessor.register_tags(['jakarta', 'macet'])

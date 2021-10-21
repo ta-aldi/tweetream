@@ -1,4 +1,5 @@
 import re, string, nltk, os
+from config import admin, excluded_topics
 from nltk.stem.porter import PorterStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -16,7 +17,14 @@ class Preprocessor():
         self.replacement_word_list = [line.rstrip('\n').rstrip('\r') for line in open(self.replacement_word_list_path)]
 
         # save tags
-        self.tags = []
+        self.tags = self.get_tags(admin.list_topics().topics)
+
+    def get_tags(self, topics_dict):
+        tags = []
+        for key in topics_dict:
+            if key not in excluded_topics:
+                tags.append(key)
+        return tags
 
     def run(self, tweet):
         # remove "RT"
