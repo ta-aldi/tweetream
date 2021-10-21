@@ -1,5 +1,5 @@
 from confluent_kafka import Consumer, Producer
-from confluent_kafka.admin import AdminClient
+from confluent_kafka.admin import AdminClient, NewTopic
 from dotenv import load_dotenv
 import socket, os
 
@@ -63,3 +63,16 @@ consumer = TweetreamConsumer(CONSUMER_CONF)
 producer = TweetreamProducer(PRODUCER_CONF)
 admin = AdminClient(ADMIN_CONF)
 excluded_topics = os.getenv('EXCLUDE_TOPICS').split(',')
+
+# function to create new topic
+def create_topics(topics):
+    new_topics = [NewTopic(topic, num_partitions=2, replication_factor=2) for topic in topics]
+    fs = admin.create_topics(new_topics)
+
+    # Wait for each operation to finish.
+    for topic, f in fs.items():
+        try:
+            f.result()  # The result itself is None
+            print("Topic {} created".format(topic))
+        except Exception as e:
+            print("Failed to create topic {}: {}".format(topic, e))

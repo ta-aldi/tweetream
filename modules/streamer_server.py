@@ -1,6 +1,6 @@
 from flask import Flask, request
 from streamer import Stream, auth, preprocessor
-from config import TweetreamProducer, PRODUCER_CONF
+from config import TweetreamProducer, PRODUCER_CONF, create_topics
 
 app = Flask(__name__)
 
@@ -27,6 +27,9 @@ def index():
 
             # register new tags
             preprocessor.register_tags(tags)
+
+            # create new topic
+            create_topics(tags)
 
             # recreate streamer
             setup_streamer()
