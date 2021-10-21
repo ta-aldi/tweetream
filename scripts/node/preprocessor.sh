@@ -4,4 +4,4 @@ TWEETREAM=/home/michael/tweetream
 
 cd $TWEETREAM
 pip3 install -r modules/requirements.txt
-python3 modules/streamer.py
+python3 modules/streamer.py jakarta macet
