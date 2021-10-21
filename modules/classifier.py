@@ -15,8 +15,8 @@ class Classifier():
     def run(self, raw_data):
         data = json.loads(raw_data)
         data['prediction'] = self.model.predict([data['text_cleaned']])[0]
-        data = json.dumps(data)
-        self.producer.produce('TWClassified', data.encode('utf-8'), callback=acked)
+        str_data = json.dumps(data)
+        self.producer.produce(data['tag'], str_data.encode('utf-8'), callback=acked)
 
     def listen(self):
         self.consumer.listen(self.run)
