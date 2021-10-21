@@ -1,0 +1,8 @@
+aiohttp==3.7.4.post0
+confluent-kafka==1.7.0
+Flask==2.0.2
+nltk==3.6.5
+oauthlib==3.1.1
+python-dotenv==0.19.0
+scikit-learn==1.0
+tweepy==4.1.0
