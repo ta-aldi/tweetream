@@ -35,7 +35,7 @@ class Stream(tweepy.Stream):
         data['text_cleaned'] = self.preprocessor.run(data['text'])
         data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
         data = json.dumps(data)
-        print(data)
+        # print(data)
         # self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
         # self.producer.flush()
 

@@ -2,11 +2,17 @@ from flask import Flask, request
 from streamer import stream
 
 app = Flask(__name__)
+stream_thread = None
 
 @app.route('/', methods=['POST'])
 def index():
     if request.method == 'POST':
-        return {'msg': 'Hello World POST'}
+        print(stream_thread)
+        try:
+            stream.preprocessor.register_tags(request.json['tags'])
+            return {'msg': 'Success'}, 201
+        except KeyError:
+            return {'error': 'The required field is "tags" of type list of strings'}, 400
 
 if __name__ == '__main__':
     # Streaming filter
