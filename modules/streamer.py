@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from preprocessor import Preprocessor
-from config import TweetreamProducer, PRODUCER_CONF, acked
+from config import acked
 import os, tweepy, json
 
 # Load dotenv library
@@ -35,9 +35,8 @@ class Stream(tweepy.Stream):
         data['text_cleaned'] = self.preprocessor.run(data['text'])
         data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
         data = json.dumps(data)
-        # print(data)
-        # self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
-        # self.producer.flush()
+        self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
+        self.producer.flush()
 
     # On Connect event
     def on_connect(self):
@@ -64,6 +63,3 @@ auth = {
 # Create preprocessor objects along and give initial keyword tags
 preprocessor = Preprocessor()
 preprocessor.register_tags(['jakarta', 'macet'])
-
-# Create stream object with given credentials
-stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF), daemon=True)

@@ -57,7 +57,7 @@ class Preprocessor():
         # add new tag dynamically if doesn't exist
         for tag in tags:
             if tag not in self.tags:
-                self.tags.append(tag)
+                self.tags.append(tag.lower())
 
     def add_tag(self, cleaned_tweet):
         # add tag for each streamed tweet
@@ -65,6 +65,7 @@ class Preprocessor():
         tag = 'TWClassified'
         words = cleaned_tweet.split(' ')
         for word in words:
+            word = word.lower()
             if word in self.tags:
                 tag = word
                 break

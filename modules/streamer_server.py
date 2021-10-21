@@ -1,24 +1,40 @@
 from flask import Flask, request
-from streamer import stream
+from streamer import Stream, auth, preprocessor
+from config import TweetreamProducer, PRODUCER_CONF
 
 app = Flask(__name__)
-stream_thread = None
 
-@app.route('/', methods=['POST'])
-def index():
-    if request.method == 'POST':
-        print(stream_thread)
-        try:
-            stream.preprocessor.register_tags(request.json['tags'])
-            return {'msg': 'Success'}, 201
-        except KeyError:
-            return {'error': 'The required field is "tags" of type list of strings'}, 400
+def setup_streamer():
+    global stream
 
-if __name__ == '__main__':
+    # Create stream object with given credentials
+    stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF))
     # Streaming filter
     stream_thread = stream.filter(
         track=stream.preprocessor.tags,
         filter_level="low",
         threaded=True
     )
+
+@app.route('/', methods=['POST'])
+def index():
+    if request.method == 'POST':
+        try:
+            tags = request.json['tags']
+
+            # close previously stream connection
+            stream.disconnect()
+
+            # register new tags
+            preprocessor.register_tags(tags)
+
+            # recreate streamer
+            setup_streamer()
+
+            return {'msg': 'Success'}, 201
+        except KeyError:
+            return {'error': "The required field is 'tags' of type list of strings"}, 400
+
+if __name__ == '__main__':
+    setup_streamer()
     app.run(host='0.0.0.0')
