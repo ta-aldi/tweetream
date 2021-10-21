@@ -15,6 +15,9 @@ class Preprocessor():
         self.replacement_word_list_path = os.path.abspath('utils/replacement_word_list.txt')
         self.replacement_word_list = [line.rstrip('\n').rstrip('\r') for line in open(self.replacement_word_list_path)]
 
+        # save tags
+        self.tags = []
+
     def run(self, tweet):
         # remove "RT"
         regex = re.compile('RT\s')
@@ -49,3 +52,20 @@ class Preprocessor():
         tweet = ' '.join(new_string)
 
         return tweet
+
+    def register_tags(self, tags):
+        # add new tag dynamically if doesn't exist
+        for tag in tags:
+            if tag not in self.tags:
+                self.tags.append(tag)
+
+    def add_tag(self, cleaned_tweet):
+        # add tag for each streamed tweet
+        # this tag will be used and published to kafka's specific topic by classifier.py
+        tag = 'TWClassified'
+        words = cleaned_tweet.split(' ')
+        for word in words:
+            if word in self.tags:
+                tag = word
+                break
+        return tag

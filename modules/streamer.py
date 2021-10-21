@@ -32,6 +32,7 @@ class Stream(tweepy.Stream):
         data = raw_data.decode('utf-8')
         data = self.filter_raw_data(json.loads(data))
         data['text_cleaned'] = self.preprocessor.run(data['text'])
+        data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
         data = json.dumps(data)
         self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
         self.producer.flush()
@@ -58,11 +59,15 @@ auth = {
     'TW_ACCESS_TOKEN_SECRET': os.getenv('TW_ACCESS_TOKEN_SECRET')
 }
 
+# Create preprocessor objects along and give initial keyword tags
+preprocessor = Preprocessor()
+preprocessor.register_tags(sys.argv[1:])
+
 # Create stream object with given credentials
-stream = Stream(auth, Preprocessor(), TweetreamProducer(PRODUCER_CONF))
+stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF))
 
 # Streaming filter
 stream.filter(
-    track=sys.argv[1:],
+    track=stream.preprocessor.tags,
     filter_level="low"
 )
