@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from preprocessor import Preprocessor
 from config import TweetreamProducer, PRODUCER_CONF, acked
-import os, tweepy, json, sys
+import os, tweepy, json
 
 # Load dotenv library
 load_dotenv()
@@ -10,12 +10,13 @@ load_dotenv()
 class Stream(tweepy.Stream):
 
     # Initialize Preprocessor Object
-    def __init__(self, auth, preprocessor, producer):
+    def __init__(self, auth, preprocessor, producer, daemon=False):
         super(Stream, self).__init__(
             auth['TW_API_KEY'],
             auth['TW_API_KEY_SECRET'],
             auth['TW_ACCESS_TOKEN'],
-            auth['TW_ACCESS_TOKEN_SECRET']
+            auth['TW_ACCESS_TOKEN_SECRET'],
+            daemon=daemon
         )
         self.preprocessor = preprocessor
         self.producer = producer
@@ -34,8 +35,9 @@ class Stream(tweepy.Stream):
         data['text_cleaned'] = self.preprocessor.run(data['text'])
         data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
         data = json.dumps(data)
-        self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
-        self.producer.flush()
+        print(data)
+        # self.producer.produce('TWCleaned', data.encode('utf-8'), callback=acked)
+        # self.producer.flush()
 
     # On Connect event
     def on_connect(self):
@@ -61,13 +63,7 @@ auth = {
 
 # Create preprocessor objects along and give initial keyword tags
 preprocessor = Preprocessor()
-preprocessor.register_tags(sys.argv[1:])
+preprocessor.register_tags(['jakarta', 'macet'])
 
 # Create stream object with given credentials
-stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF))
-
-# Streaming filter
-stream.filter(
-    track=stream.preprocessor.tags,
-    filter_level="low"
-)
+stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF), daemon=True)
