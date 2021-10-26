@@ -14,6 +14,9 @@ type WebSocketController struct {
 }
 
 func (wsc *WebSocketController) Connect() {
+	// Get user-requested Topic
+	topic := wsc.GetString("topic")
+
 	// Upgrade from http request to WebSocket.
 	ws, err := websocket.Upgrade(wsc.Ctx.ResponseWriter, wsc.Ctx.Request, nil, 1024, 1024)
 	if _, ok := err.(websocket.HandshakeError); ok {
@@ -26,5 +29,5 @@ func (wsc *WebSocketController) Connect() {
 	}
 
 	// Subscribe to Kafka
-	services.Subscribe(ws)
+	services.Subscribe(ws, topic)
 }

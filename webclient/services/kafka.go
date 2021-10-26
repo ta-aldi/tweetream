@@ -55,7 +55,7 @@ func GetTopics() []string {
 	return topics
 }
 
-func Subscribe(ws *websocket.Conn) {
+func Subscribe(ws *websocket.Conn, topic string) {
 	var (
 		data models.Tweet
 	)
@@ -77,7 +77,7 @@ func Subscribe(ws *websocket.Conn) {
 	}
 
 	// subscribe to topic
-	consumer.SubscribeTopics([]string{os.Getenv("TOPICS_SUB")}, nil)
+	consumer.SubscribeTopics([]string{topic}, nil)
 
 	// poll messages
 	for {
