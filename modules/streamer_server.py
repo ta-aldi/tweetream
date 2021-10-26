@@ -1,8 +1,11 @@
 from flask import Flask, request
+from flask_cors import CORS, cross_origin
 from streamer import Stream, auth, preprocessor
 from config import TweetreamProducer, PRODUCER_CONF, create_topics
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 def setup_streamer():
     global stream
@@ -17,6 +20,7 @@ def setup_streamer():
     )
 
 @app.route('/', methods=['POST'])
+@cross_origin()
 def index():
     if request.method == 'POST':
         try:
@@ -40,4 +44,4 @@ def index():
 
 if __name__ == '__main__':
     setup_streamer()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=80)
