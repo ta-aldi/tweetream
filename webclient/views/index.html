@@ -12,7 +12,7 @@
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">Tweetream</span>
                 <div class="btn-group">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="defaultDropdown" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="defaultDropdown" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                         Choose Topic
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
@@ -20,6 +20,10 @@
                             <li><a class="dropdown-item" href="#">{{$topic}}</a></li>
                         {{end}}
                     </ul>
+                </div>
+                <div class="btn-group">
+                    <input placeholder="Topic Name" id="new-topic-input">
+                    <button class="btn btn-secondary" type="button" id="create-topic-btn">Create Topic</button>
                 </div>
             </div>
         </nav>
@@ -31,6 +35,9 @@
         <script defer>
             (
                 function() {
+                    // Upstream streamer server for pushing information about topic creation & deletion
+                    const STREAMER_SERVER = {{.STREAMER_SERVER}};
+
                     // create a websocket connection to listen to a topic
                     function createWebSocket(topic) {
                         // Create a socket
@@ -78,6 +85,28 @@
                         }
                     }
 
+                    // request topic creation to the streamer server
+                    function createTopic(topic) {
+                        const url = "http://" + STREAMER_SERVER;
+                        const data = {
+                            'tags': [topic]
+                        }
+                        
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: data
+                        })
+                            .then(response => {
+                                location.reload()
+                            })
+                            .catch(err => {
+                                console.log(err)
+                            })
+                    }
+
                     // get current topic element button
                     const current_topic_btn = document.querySelector(".btn-group > button")
 
@@ -88,6 +117,12 @@
                                 current_topic_btn.innerHTML = topic_element.innerHTML
                                 createWebSocket(topic_element.innerHTML)
                             })
+                        })
+
+                    // topic creator listener
+                    document.getElementById("create-topic-btn")
+                        .addEventListener("click", function() {
+                            createTopic(document.getElementById("new-topic-input").value)
                         })
                 }
             )();
