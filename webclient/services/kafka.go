@@ -5,12 +5,55 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/michaelsusanto81/tweetream/webclient/models"
 )
+
+func GetTopics() []string {
+	// load .env credentials
+	err_env := godotenv.Load(".env")
+	if err_env != nil {
+		log.Fatalf(err_env.Error())
+	}
+
+	// create Kafka Admin client
+	admin, err := kafka.NewAdminClient(&kafka.ConfigMap{
+		"bootstrap.servers": os.Getenv("KAFKA_SERVERS"),
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	// get all metadata
+	metadata, err := admin.GetMetadata(nil, true, 5000)
+	if err != nil {
+		panic(err)
+	}
+
+	// list all topics
+	excluded_topics := strings.Split(os.Getenv("EXCLUDE_TOPICS"), ",")
+	topics := []string{}
+	for key, _ := range metadata.Topics {
+		isExcluded := false
+
+		for _, excluded_topic := range excluded_topics {
+			if key == excluded_topic {
+				isExcluded = true
+				break
+			}
+		}
+
+		if !isExcluded {
+			topics = append(topics, key)
+		}
+	}
+
+	return topics
+}
 
 func Subscribe(ws *websocket.Conn) {
 	var (
