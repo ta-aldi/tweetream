@@ -16,9 +16,9 @@
                         Choose Topic
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
-                        <li><a class="dropdown-item" href="#">Topic</a></li>
-                        <li><a class="dropdown-item" href="#">Topic</a></li>
-                        <li><a class="dropdown-item" href="#">Topic</a></li>
+                        {{range $topic := .topics}}
+                            <li><a class="dropdown-item" href="#">{{$topic}}</a></li>
+                        {{end}}
                     </ul>
                 </div>
             </div>

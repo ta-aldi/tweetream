@@ -11,6 +11,8 @@ type MainController struct {
 
 func (c *MainController) Get() {
 	c.TplName = "index.html"
+	Response := services.GetTopics()
+	c.Data["topics"] = Response
 }
 
 func (c *MainController) GetTopics() {
