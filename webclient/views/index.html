@@ -35,11 +35,18 @@
         <script defer>
             (
                 function() {
+                    let socket = undefined;
+                    
                     // Upstream streamer server for pushing information about topic creation & deletion
                     const STREAMER_SERVER = {{.STREAMER_SERVER}};
 
                     // create a websocket connection to listen to a topic
                     function createWebSocket(topic) {
+                        // close any ongoing socket connection
+                        if (socket !== undefined) {
+                            socket.close(1000);
+                        }
+
                         // Create a socket
                         socket = new WebSocket('ws://' + window.location.host + '/ws?topic=' + topic)
                         socket.onmessage = function (event) {
@@ -91,13 +98,14 @@
                         const data = {
                             'tags': [topic]
                         }
+                        console.log(data)
                         
                         fetch(url, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: data
+                            body: JSON.stringify(data)
                         })
                             .then(response => {
                                 location.reload()
