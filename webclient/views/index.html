@@ -45,6 +45,7 @@
                         // close any ongoing socket connection
                         if (socket !== undefined) {
                             socket.close(1000);
+                            socket.send("close");
                         }
 
                         // Create a socket

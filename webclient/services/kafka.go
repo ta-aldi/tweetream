@@ -79,6 +79,18 @@ func Subscribe(ws *websocket.Conn, topic string) {
 	// subscribe to topic
 	consumer.SubscribeTopics([]string{topic}, nil)
 
+	// listen for close event from client
+	go func(ws *websocket.Conn, consumer *kafka.Consumer) {
+		for {
+			_, message, err := ws.ReadMessage()
+			if err != nil || string(message) == "close" {
+				ws.Close()
+				consumer.Close()
+				return
+			}
+		}
+	}(ws, consumer)
+
 	// poll messages
 	for {
 		msg, err := consumer.ReadMessage(-1)
