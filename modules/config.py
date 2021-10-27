@@ -76,3 +76,15 @@ def create_topics(topics):
             print("Topic {} created".format(topic))
         except Exception as e:
             print("Failed to create topic {}: {}".format(topic, e))
+
+# function to delete topic
+def delete_topics(topics):
+    fs = admin.delete_topics(topics)
+
+    # Wait for each operation to finish.
+    for topic, f in fs.items():
+        try:
+            f.result()  # The result itself is None
+            print("Topic {} deleted".format(topic))
+        except Exception as e:
+            print("Failed to delete topic {}: {}".format(topic, e))

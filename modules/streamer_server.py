@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from streamer import Stream, auth, preprocessor
-from config import TweetreamProducer, PRODUCER_CONF, create_topics
+from config import TweetreamProducer, PRODUCER_CONF, create_topics, delete_topics
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -19,7 +19,7 @@ def setup_streamer():
         threaded=True
     )
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'DELETE'])
 @cross_origin()
 def index():
     if request.method == 'POST':
@@ -41,6 +41,30 @@ def index():
             return {'msg': 'Success'}, 201
         except KeyError:
             return {'error': "The required field is 'tags' of type list of strings"}, 400
+        except:
+            return {'error': "Unknown Error Occured, failed to create topic"}, 500
+
+    elif request.method == 'DELETE':
+        try:
+            tags = request.json['tags']
+
+            # close previously stream connection
+            stream.disconnect()
+
+            # unregister tags
+            preprocessor.unregister_tags(tags)
+
+            # delete topic
+            delete_topics(tags)
+
+            # recreate streamer
+            setup_streamer()
+
+            return {'msg': 'Success'}, 201
+        except KeyError:
+            return {'error': "The required field is 'tags' of type list of strings"}, 400
+        except:
+            return {'error': "Unknown Error Occured, failed to delete topic"}, 500
 
 if __name__ == '__main__':
     setup_streamer()

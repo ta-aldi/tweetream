@@ -67,6 +67,12 @@ class Preprocessor():
             if tag not in self.tags:
                 self.tags.append(tag.lower())
 
+    def unregister_tags(self, tags):
+        # delete tag dynamically if exists
+        for tag in tags:
+            if tag in self.tags:
+                self.tags.remove(tag.lower())
+
     def add_tag(self, cleaned_tweet):
         # add tag for each streamed tweet
         # this tag will be used and published to kafka's specific topic by classifier.py
