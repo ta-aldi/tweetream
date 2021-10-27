@@ -20,6 +20,7 @@
                             <li><a class="dropdown-item" href="#">{{$topic}}</a></li>
                         {{end}}
                     </ul>
+                    <button class="btn btn-danger disabled" type="button" id="delete-topic-btn">Delete Topic</button>
                 </div>
                 <div class="btn-group">
                     <input placeholder="Topic Name" id="new-topic-input">
@@ -93,16 +94,15 @@
                         }
                     }
 
-                    // request topic creation to the streamer server
-                    function createTopic(topic) {
+                    // request topic modification to the streamer server
+                    function modifyTopic(method, topic) {
                         const url = "http://" + STREAMER_SERVER;
                         const data = {
                             'tags': [topic]
                         }
-                        console.log(data)
                         
                         fetch(url, {
-                            method: 'POST',
+                            method: method,
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -116,8 +116,17 @@
                             })
                     }
 
+                    // create or delete topic
+                    function createTopic(topic) {
+                        modifyTopic('POST', topic)
+                    }
+                    function deleteTopic(topic) {
+                        modifyTopic('DELETE', topic)
+                    }
+
                     // get current topic element button
                     const current_topic_btn = document.querySelector(".btn-group > button")
+                    const delete_topic_btn = document.getElementById("delete-topic-btn")
 
                     // topic changer listener
                     document.querySelectorAll(".btn-group .dropdown-menu .dropdown-item")
@@ -125,13 +134,26 @@
                             topic_element.addEventListener("click", function() {
                                 current_topic_btn.innerHTML = topic_element.innerHTML
                                 createWebSocket(topic_element.innerHTML)
+                                delete_topic_btn.classList.remove('disabled')
+
+                                if (topic_element.innerHTML === "TWClassified") {
+                                    delete_topic_btn.classList.add('disabled')
+                                }
                             })
                         })
 
                     // topic creator listener
                     document.getElementById("create-topic-btn")
                         .addEventListener("click", function() {
-                            createTopic(document.getElementById("new-topic-input").value)
+                            const new_topic = document.getElementById("new-topic-input").value
+                            createTopic(new_topic)
+                        })
+
+                    // topic deletor listener
+                    delete_topic_btn
+                        .addEventListener("click", function() {
+                            const current_topic = document.getElementById("defaultDropdown").innerHTML
+                            deleteTopic(current_topic)
                         })
                 }
             )();
