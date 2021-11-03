@@ -1,7 +1,8 @@
 import gevent, math, random, time
 
-from locust import HttpUser, task, events
+from locust import HttpUser, TaskSet, task, events
 from locust.runners import STATE_STOPPING, STATE_STOPPED, STATE_CLEANUP, WorkerRunner
+from locust_plugins.users import SocketIOUser
 
 
 def poissonDistSample():
@@ -21,7 +22,25 @@ def poissonDistSample():
     return k-1
 
 
-class TweetreamUser(HttpUser):
+class TweetreamTaskSet(TaskSet):
+
+    @task(1)
+    def landing_page(self):
+        self.client.get('/')
+
+    @task(1)
+    def get_all_topics(self):
+        self.client.get('/topics')
+
+    @task(3)
+    def subscribe_topic(self):
+        host = self.user.host.split('://')[1]
+        ws_url = 'ws://%s/ws?topic=%s' % (host, 'jakarta')
+        self.user.connect(ws_url)
+
+
+class TweetreamUser(HttpUser, SocketIOUser):
+    tasks = [TweetreamTaskSet]
     
     def wait_time(self):
         return poissonDistSample()
@@ -45,7 +64,3 @@ class TweetreamUser(HttpUser):
     @events.test_stop.add_listener
     def on_test_stop(environment, **kwargs):
         print('Stopping test')
-
-    @task
-    def landing_page(self):
-        self.client.get('/')
