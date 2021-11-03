@@ -128,3 +128,41 @@ go build -o bin/webclient main.go && go run main.go
 ```
 bash start.sh
 ```
+
+## Load Testing
+- Create virtual environment
+```
+# Windows
+python -m venv env
+
+# Mac/Linux
+python3 -m venv env
+```
+
+- Activate virtual environment
+```
+# Windows
+env\Scripts\activate
+
+# Mac/Linux
+source env/bin/activate
+```
+
+- Install dependencies
+```
+# Windows
+pip install -r tests\requirements.txt
+
+# Mac/Linux
+pip3 install -r tests/requirements.txt
+```
+
+- Go to **tests** directory
+```
+cd tests
+```
+
+- Run docker compose with n worker
+```
+docker-compose up --scale worker=n
+```
