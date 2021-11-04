@@ -28,15 +28,11 @@ class TweetreamTaskSet(TaskSet):
     def landing_page(self):
         self.client.get('/')
 
-    @task(1)
-    def get_all_topics(self):
-        self.client.get('/topics')
-
     @task(3)
     def subscribe_topic(self):
         host = self.user.host.split('://')[1]
         ws_url = 'ws://%s/ws?topic=%s' % (host, 'jakarta')
-        self.user.connect(ws_url)
+        self.user.connect(ws_url, [])
 
 
 class TweetreamUser(HttpUser, SocketIOUser):
