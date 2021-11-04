@@ -1,6 +1,6 @@
 import gevent, math, random, time
 
-from locust import HttpUser, TaskSet, task, events
+from locust import HttpUser, TaskSet, LoadTestShape, task, events
 from locust.runners import STATE_STOPPING, STATE_STOPPED, STATE_CLEANUP, WorkerRunner
 from locust_plugins.users import SocketIOUser
 
@@ -60,3 +60,18 @@ class TweetreamUser(HttpUser, SocketIOUser):
     @events.test_stop.add_listener
     def on_test_stop(environment, **kwargs):
         print('Stopping test')
+
+
+class TweetreamShape(LoadTestShape):
+    time_limit = 600
+    spawn_rate = 10
+
+    def tick(self):
+        run_time = self.get_run_time()
+
+        if run_time < self.time_limit:
+            # User count rounded to nearest hundred.
+            user_count = round(run_time, -2)
+            return (user_count, self.spawn_rate)
+
+        return None
