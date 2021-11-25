@@ -23,7 +23,7 @@ class Preprocessor():
         tags = []
         for key in topics_dict:
             if key not in excluded_topics:
-                tags.append(key)
+                tags.append("TW-" + key)
         return tags
 
     def run(self, tweet):
@@ -64,22 +64,24 @@ class Preprocessor():
     def register_tags(self, tags):
         # add new tag dynamically if doesn't exist
         for tag in tags:
-            if tag not in self.tags:
-                self.tags.append(tag.lower())
+            appended_tag = "TW-" + tag
+            if appended_tag not in self.tags:
+                self.tags.append("TW-" + tag.lower())
 
     def unregister_tags(self, tags):
         # delete tag dynamically if exists
         for tag in tags:
-            if tag in self.tags:
-                self.tags.remove(tag.lower())
+            appended_tag = "TW-" + tag
+            if appended_tag in self.tags:
+                self.tags.remove("TW-" + tag.lower())
 
     def add_tag(self, cleaned_tweet):
         # add tag for each streamed tweet
         # this tag will be used and published to kafka's specific topic by classifier.py
-        tag = 'TWClassified'
+        tag = 'TW-Classified'
         words = cleaned_tweet.split(' ')
         for word in words:
-            word = word.lower()
+            word = "TW-" + word.lower()
             if word in self.tags:
                 tag = word
                 break

@@ -2,7 +2,7 @@ from config import TweetreamConsumer, CONSUMER_CONF
 
 c = TweetreamConsumer(CONSUMER_CONF)
 
-c.subscribe(['TWClassified'])
+c.subscribe(['TW-Classified'])
 
 while True:
     msg = c.poll(1.0)
