@@ -48,7 +48,7 @@ func GetTopics() []string {
 		}
 
 		if !isExcluded {
-			topics = append(topics, key)
+			topics = append(topics, key[3:])
 		}
 	}
 

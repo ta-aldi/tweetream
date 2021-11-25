@@ -15,7 +15,7 @@ type WebSocketController struct {
 
 func (wsc *WebSocketController) Connect() {
 	// Get user-requested Topic
-	topic := wsc.GetString("topic")
+	topic := "TW-" + wsc.GetString("topic")
 
 	// Upgrade from http request to WebSocket.
 	ws, err := websocket.Upgrade(wsc.Ctx.ResponseWriter, wsc.Ctx.Request, nil, 1024, 1024)
