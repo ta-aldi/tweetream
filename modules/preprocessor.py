@@ -23,7 +23,7 @@ class Preprocessor():
         tags = []
         for key in topics_dict:
             if key[0:3] == 'TW-':
-                tags.append(key)
+                tags.append(key[0:3])
         return tags
 
     def run(self, tweet):
@@ -64,16 +64,14 @@ class Preprocessor():
     def register_tags(self, tags):
         # add new tag dynamically if doesn't exist
         for tag in tags:
-            appended_tag = "TW-" + tag
-            if appended_tag not in self.tags:
-                self.tags.append("TW-" + tag.lower())
+            if tag not in self.tags:
+                self.tags.append(tag.lower())
 
     def unregister_tags(self, tags):
         # delete tag dynamically if exists
         for tag in tags:
-            appended_tag = "TW-" + tag
-            if appended_tag in self.tags:
-                self.tags.remove("TW-" + tag.lower())
+            if tag in self.tags:
+                self.tags.remove(tag.lower())
 
     def add_tag(self, cleaned_tweet):
         # add tag for each streamed tweet
@@ -81,8 +79,8 @@ class Preprocessor():
         tag = 'TW-Classified'
         words = cleaned_tweet.split(' ')
         for word in words:
-            word = "TW-" + word.lower()
+            word = word.lower()
             if word in self.tags:
-                tag = word
+                tag = 'TW-' + word
                 break
         return tag
