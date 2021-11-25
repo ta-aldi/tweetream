@@ -9,7 +9,7 @@ class Classifier():
         self.model = load(model_path)
         self.producer = producer
         self.consumer = consumer
-        self.consumer.subscribe(['TW-Cleaned'])
+        self.consumer.subscribe(['TWT-Cleaned'])
 
     # classify
     def run(self, raw_data):
