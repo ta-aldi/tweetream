@@ -65,7 +65,7 @@ admin = AdminClient(ADMIN_CONF)
 
 # function to create new topic
 def create_topics(topics):
-    new_topics = [NewTopic(topic, num_partitions=2, replication_factor=2) for topic in topics]
+    new_topics = [NewTopic("TW-" + topic, num_partitions=2, replication_factor=2) for topic in topics]
     fs = admin.create_topics(new_topics)
 
     # Wait for each operation to finish.
@@ -78,6 +78,7 @@ def create_topics(topics):
 
 # function to delete topic
 def delete_topics(topics):
+    topics = ["TW-" + topic for topic in topics]
     fs = admin.delete_topics(topics)
 
     # Wait for each operation to finish.
