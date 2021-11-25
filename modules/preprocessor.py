@@ -1,5 +1,5 @@
 import re, string, nltk, os
-from config import admin, excluded_topics
+from config import admin
 from nltk.stem.porter import PorterStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -22,8 +22,8 @@ class Preprocessor():
     def get_tags(self, topics_dict):
         tags = []
         for key in topics_dict:
-            if key not in excluded_topics:
-                tags.append("TW-" + key)
+            if key[0:3] == 'TW-':
+                tags.append(key)
         return tags
 
     def run(self, tweet):

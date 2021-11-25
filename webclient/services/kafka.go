@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
@@ -35,19 +34,9 @@ func GetTopics() []string {
 	}
 
 	// list all topics
-	excluded_topics := strings.Split(os.Getenv("EXCLUDE_TOPICS"), ",")
 	topics := []string{}
 	for key, _ := range metadata.Topics {
-		isExcluded := false
-
-		for _, excluded_topic := range excluded_topics {
-			if key == excluded_topic {
-				isExcluded = true
-				break
-			}
-		}
-
-		if !isExcluded {
+		if key[0:3] == "TW-" {
 			topics = append(topics, key[3:])
 		}
 	}

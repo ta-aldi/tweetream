@@ -62,7 +62,6 @@ class TweetreamProducer(Producer):
 consumer = TweetreamConsumer(CONSUMER_CONF)
 producer = TweetreamProducer(PRODUCER_CONF)
 admin = AdminClient(ADMIN_CONF)
-excluded_topics = os.getenv('EXCLUDE_TOPICS').split(',')
 
 # function to create new topic
 def create_topics(topics):
