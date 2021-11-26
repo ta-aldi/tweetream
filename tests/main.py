@@ -78,14 +78,11 @@ class TweetreamShape(LoadTestShape):
     stages = [
         {"duration": 60, "users": 10, "spawn_rate": 10},
         {"duration": 120, "users": 50, "spawn_rate": 10},
-        {"duration": 180, "users": 100, "spawn_rate": 50},
-        {"duration": 240, "users": 200, "spawn_rate": 50},
-        {"duration": 300, "users": 500, "spawn_rate": 100},
-        {"duration": 360, "users": 1000, "spawn_rate": 100},
-        {"duration": 420, "users": 3000, "spawn_rate": 100},
-        {"duration": 480, "users": 5000, "spawn_rate": 100},
-        {"duration": 540, "users": 7500, "spawn_rate": 100},
-        {"duration": 600, "users": 10000, "spawn_rate": 100},
+        {"duration": 240, "users": 100, "spawn_rate": 10},
+        {"duration": 480, "users": 250, "spawn_rate": 10},
+        {"duration": 720, "users": 500, "spawn_rate": 10},
+        {"duration": 840, "users": 250, "spawn_rate": 10},
+        {"duration": 960, "users": 100, "spawn_rate": 10},
     ]
 
     def tick(self):

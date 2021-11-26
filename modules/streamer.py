@@ -23,12 +23,22 @@ class Stream(tweepy.Stream):
 
     def filter_raw_data(self, raw_data):
         filtered = {}
+
         try:
             filtered['created_at'] = raw_data['created_at']
         except KeyError:
             filtered['created_at'] = 'No Date Specified'
-        filtered['text'] = raw_data['text']
-        filtered['username'] = raw_data['user']['screen_name']
+
+        try:
+            filtered['text'] = raw_data['text']
+        except KeyError:
+            filtered['text'] = 'No Tweet'
+
+        try:
+            filtered['username'] = raw_data['user']['screen_name']
+        except:
+            filtered['username'] = 'No Username (Anonymous)'
+            
         return filtered
 
     # Process the text of any tweet that comes from the Twitter API
