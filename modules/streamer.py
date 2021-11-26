@@ -23,7 +23,10 @@ class Stream(tweepy.Stream):
 
     def filter_raw_data(self, raw_data):
         filtered = {}
-        filtered['created_at'] = raw_data['created_at']
+        try:
+            filtered['created_at'] = raw_data['created_at']
+        except KeyError:
+            filtered['created_at'] = 'No Date Specified'
         filtered['text'] = raw_data['text']
         filtered['username'] = raw_data['user']['screen_name']
         return filtered

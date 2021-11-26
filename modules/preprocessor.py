@@ -23,7 +23,7 @@ class Preprocessor():
         tags = []
         for key in topics_dict:
             if key[0:3] == 'TW-':
-                tags.append(key[0:3])
+                tags.append(key[3:])
         return tags
 
     def run(self, tweet):
