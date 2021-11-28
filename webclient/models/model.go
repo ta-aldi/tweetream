@@ -6,3 +6,7 @@ type Tweet struct {
 	Type      string `json:"prediction"`
 	CreatedAt string `json:"created_at"`
 }
+
+type TweetreamTopic struct {
+	Name string `json:"name"`
+}

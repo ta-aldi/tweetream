@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/joho/godotenv"
+	"github.com/michaelsusanto81/tweetream/webclient/models"
 	"github.com/michaelsusanto81/tweetream/webclient/services"
 )
 
@@ -31,5 +33,24 @@ func (c *MainController) Get() {
 func (c *MainController) GetTopics() {
 	Response := services.GetTopics()
 	c.Data["json"] = Response
+	c.ServeJSON()
+}
+
+func (c *MainController) CreateTopic() {
+	// parse json input
+	var topic models.TweetreamTopic
+	json.Unmarshal(c.Ctx.Input.RequestBody, &topic)
+
+	// create topic
+	err := services.CreateTopic(topic.Name)
+
+	// return responses
+	if err != nil {
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		c.Data["json"] = map[string]interface{}{"error": err.Error()}
+	} else {
+		c.Ctx.ResponseWriter.WriteHeader(201)
+		c.Data["json"] = map[string]interface{}{"msg": "Success"}
+	}
 	c.ServeJSON()
 }

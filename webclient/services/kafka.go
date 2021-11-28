@@ -1,10 +1,13 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
@@ -42,6 +45,60 @@ func GetTopics() []string {
 	}
 
 	return topics
+}
+
+func CreateTopic(topic string) error {
+
+	// load .env credentials
+	err_env := godotenv.Load(".env")
+	if err_env != nil {
+		return err_env
+	}
+
+	// create Kafka Admin client
+	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
+		"bootstrap.servers": os.Getenv("KAFKA_SERVERS"),
+	})
+	if err != nil {
+		return err
+	}
+
+	// Contexts are used to abort or limit the amount of time
+	// the Admin call blocks waiting for a result.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Create topics on cluster.
+	// Set Admin options to wait for the operation to finish (or at most 60s)
+	maxDuration, err := time.ParseDuration("60s")
+	if err != nil {
+		return errors.New("time.ParseDuration(60s)")
+	}
+
+	results, err := adminClient.CreateTopics(ctx,
+		[]kafka.TopicSpecification{{
+			Topic:             topic,
+			NumPartitions:     2,
+			ReplicationFactor: 2}},
+		kafka.SetAdminOperationTimeout(maxDuration))
+
+	if err != nil {
+		err_msg := fmt.Sprintf("Problem during the topic creation: %v\n", err)
+		return errors.New(err_msg)
+	}
+
+	// Check for specific topic errors
+	for _, result := range results {
+		if result.Error.Code() != kafka.ErrNoError &&
+			result.Error.Code() != kafka.ErrTopicAlreadyExists {
+			err_msg := fmt.Sprintf("Topic creation failed for %s: %v",
+				result.Topic, result.Error.String())
+			return errors.New(err_msg)
+		}
+	}
+
+	adminClient.Close()
+	return nil
 }
 
 func Subscribe(ws *websocket.Conn, topic string) {
