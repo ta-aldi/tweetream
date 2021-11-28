@@ -35,6 +35,19 @@ class TweetreamTaskSet(TaskSet):
         self.user.connect(ws_url, [])
 
 
+class TweetreamTaskCreateTopic(TaskSet):
+
+    @task
+    def create_topic(self):
+        self.client.post(
+            '/topics',
+            {
+                'name': 'TestTopic'
+            },
+            format='json'
+        )
+
+
 class TweetreamUser(HttpUser, SocketIOUser):
     tasks = [TweetreamTaskSet]
     
