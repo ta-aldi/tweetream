@@ -1,13 +1,11 @@
 package controllers
 
 import (
-	"encoding/json"
 	"log"
 	"os"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/joho/godotenv"
-	"github.com/michaelsusanto81/tweetream/webclient/models"
 	"github.com/michaelsusanto81/tweetream/webclient/services"
 )
 
@@ -38,11 +36,11 @@ func (c *MainController) GetTopics() {
 
 func (c *MainController) CreateTopic() {
 	// parse json input
-	var topic models.TweetreamTopic
-	json.Unmarshal(c.Ctx.Input.RequestBody, &topic)
+	// var topic models.TweetreamTopic
+	// json.Unmarshal(c.Ctx.Input.RequestBody, &topic)
 
 	// create topic
-	err := services.CreateTopic(topic.Name)
+	err := services.CreateTopic("TestTopic")
 
 	// return responses
 	if err != nil {
@@ -57,11 +55,11 @@ func (c *MainController) CreateTopic() {
 
 func (c *MainController) DeleteTopic() {
 	// parse json input
-	var topic models.TweetreamTopic
-	json.Unmarshal(c.Ctx.Input.RequestBody, &topic)
+	// var topic models.TweetreamTopic
+	// json.Unmarshal(c.Ctx.Input.RequestBody, &topic)
 
 	// delete topic
-	err := services.DeleteTopic(topic.Name)
+	err := services.DeleteTopic("TestTopic")
 
 	// return responses
 	if err != nil {
