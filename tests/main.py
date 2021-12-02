@@ -37,19 +37,17 @@ class TweetreamTaskSet(TaskSet):
 
 class TweetreamTaskCreateTopic(TaskSet):
 
-    @task
+    @task(1)
     def create_topic(self):
-        self.client.post(
-            '/topics',
-            {
-                'name': 'TestTopic'
-            },
-            format='json'
-        )
+        self.client.post('/topics', data={'name': 'TestTopic'})
+
+    @task(1)
+    def delete_topic(self):
+        self.client.delete('/topics', data={'name': 'TestTopic'})
 
 
 class TweetreamUser(HttpUser, SocketIOUser):
-    tasks = [TweetreamTaskSet]
+    tasks = [TweetreamTaskCreateTopic]
     
     def wait_time(self):
         return poissonDistSample()

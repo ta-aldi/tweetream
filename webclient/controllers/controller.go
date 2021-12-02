@@ -54,3 +54,22 @@ func (c *MainController) CreateTopic() {
 	}
 	c.ServeJSON()
 }
+
+func (c *MainController) DeleteTopic() {
+	// parse json input
+	var topic models.TweetreamTopic
+	json.Unmarshal(c.Ctx.Input.RequestBody, &topic)
+
+	// delete topic
+	err := services.DeleteTopic(topic.Name)
+
+	// return responses
+	if err != nil {
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		c.Data["json"] = map[string]interface{}{"error": err.Error()}
+	} else {
+		c.Ctx.ResponseWriter.WriteHeader(201)
+		c.Data["json"] = map[string]interface{}{"msg": "Success"}
+	}
+	c.ServeJSON()
+}

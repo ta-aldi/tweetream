@@ -47,6 +47,52 @@ func GetTopics() []string {
 	return topics
 }
 
+func DeleteTopic(topic string) error {
+
+	// load .env credentials
+	err_env := godotenv.Load(".env")
+	if err_env != nil {
+		return err_env
+	}
+
+	// create Kafka Admin client
+	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
+		"bootstrap.servers": os.Getenv("KAFKA_SERVERS"),
+	})
+	if err != nil {
+		return err
+	}
+
+	// Contexts are used to abort or limit the amount of time
+	// the Admin call blocks waiting for a result.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Delete topics on cluster.
+	// Set Admin options to wait for the operation to finish (or at most 60s)
+	maxDuration, err := time.ParseDuration("60s")
+	if err != nil {
+		return errors.New("time.ParseDuration(60s)")
+	}
+
+	results, err := adminClient.DeleteTopics(ctx,
+		[]string{topic},
+		kafka.SetAdminOperationTimeout(maxDuration))
+
+	if err != nil {
+		err_msg := fmt.Sprintf("Problem during the topic deletion: %v\n", err)
+		return errors.New(err_msg)
+	}
+
+	// Print results
+	for _, result := range results {
+		fmt.Printf("%s\n", result)
+	}
+
+	adminClient.Close()
+	return nil
+}
+
 func CreateTopic(topic string) error {
 
 	// load .env credentials
