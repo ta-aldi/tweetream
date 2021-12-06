@@ -39,11 +39,11 @@ class TweetreamTaskCreateTopic(TaskSet):
 
     @task(1)
     def create_topic(self):
-        self.client.post('/topics', data={'name': 'TestTopic'})
+        self.client.post('/topics')
 
     @task(1)
     def delete_topic(self):
-        self.client.delete('/topics', data={'name': 'TestTopic'})
+        self.client.delete('/topics')
 
 
 class TweetreamUser(HttpUser, SocketIOUser):
@@ -57,7 +57,7 @@ class TweetreamUser(HttpUser, SocketIOUser):
         def checker(environment):
             while environment.runner.state not in [STATE_STOPPING, STATE_STOPPED, STATE_CLEANUP]:
                 time.sleep(1)
-                if environment.runner.stats.total.num_requests > 5000:
+                if environment.runner.stats.total.num_requests > 1000000000:
                     environment.runner.quit()
                     return
 
@@ -92,8 +92,8 @@ class TweetreamShape(LoadTestShape):
         {"duration": 240, "users": 100, "spawn_rate": 10},
         {"duration": 480, "users": 250, "spawn_rate": 10},
         {"duration": 720, "users": 500, "spawn_rate": 10},
-        {"duration": 840, "users": 250, "spawn_rate": 10},
-        {"duration": 960, "users": 100, "spawn_rate": 10},
+        {"duration": 840, "users": 1000, "spawn_rate": 10},
+        # {"duration": 960, "users": 100, "spawn_rate": 10},
     ]
 
     def tick(self):
