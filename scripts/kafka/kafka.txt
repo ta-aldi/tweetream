@@ -1,6 +1,9 @@
 # Install Java OpenJDK
 bash 1_install_java.sh
 
+open ports for Kafka:
+- TCP port 9092
+
 # Create system user for kafka
 sudo su
 useradd kafka -m

@@ -1,5 +1,10 @@
 # Source: https://www.howtoforge.com/how-to-install-apache-zookeeper-on-debian-10/
 
+open ports for Zookeeper:
+- TCP port 2181 (connecting client to zookeeper)
+- TCP port 2888 (ZooKeeper peer connection)
+- TCP port 3888 (leader election)
+
 # Install Java OpenJDK
 bash 1_install_java.sh
 
