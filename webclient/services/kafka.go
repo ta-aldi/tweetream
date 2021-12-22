@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/michaelsusanto81/tweetream/webclient/models"
+	"github.com/michaelsusanto81/tweetream/webclient/utils"
 )
 
 func GetTopics() []string {
@@ -158,10 +159,12 @@ func Subscribe(ws *websocket.Conn, topic string) {
 		log.Fatalf(err_env.Error())
 	}
 
+	randGroupID := utils.RandString(64)
+
 	// create Kafka Consumer client
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": os.Getenv("KAFKA_SERVERS"),
-		"group.id":          os.Getenv("GROUP_ID"),
+		"group.id":          randGroupID,
 		"auto.offset.reset": "earliest",
 	})
 	if err != nil {
