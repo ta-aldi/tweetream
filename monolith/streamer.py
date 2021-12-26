@@ -50,7 +50,6 @@ class Stream(tweepy.Stream):
         data = raw_data.decode('utf-8')
         data = self.filter_raw_data(json.loads(data))
         data['text_cleaned'] = self.preprocessor.run(data['text'])
-        data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
         data['prediction'] = self.classify(data)
         print(data)
 
@@ -84,5 +83,5 @@ clf_path = os.path.abspath('utils/LinSVCModel.joblib')
 # stream = Stream(auth, preprocessor, clf_path)
 # # Streaming filter
 # stream_thread = stream.filter(
-#     track=stream.preprocessor.tags
+#     track=["jakarta"]
 # )

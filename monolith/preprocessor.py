@@ -1,5 +1,4 @@
 import re, string, nltk, os
-from config import admin
 from nltk.stem.porter import PorterStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -15,16 +14,6 @@ class Preprocessor():
         # add additional words to be replaced
         self.replacement_word_list_path = os.path.abspath('utils/replacement_word_list.txt')
         self.replacement_word_list = [line.rstrip('\n').rstrip('\r') for line in open(self.replacement_word_list_path)]
-
-        # save tags
-        self.tags = self.get_tags(admin.list_topics().topics)
-
-    def get_tags(self, topics_dict):
-        tags = []
-        for key in topics_dict:
-            if key[0:3] == 'TW-':
-                tags.append(key[3:])
-        return tags
 
     def run(self, tweet):
         # remove "RT"
@@ -60,27 +49,3 @@ class Preprocessor():
         tweet = ' '.join(new_string)
 
         return tweet
-
-    def register_tags(self, tags):
-        # add new tag dynamically if doesn't exist
-        for tag in tags:
-            if tag not in self.tags:
-                self.tags.append(tag.lower())
-
-    def unregister_tags(self, tags):
-        # delete tag dynamically if exists
-        for tag in tags:
-            if tag in self.tags:
-                self.tags.remove(tag.lower())
-
-    def add_tag(self, cleaned_tweet):
-        # add tag for each streamed tweet
-        # this tag will be used and published to kafka's specific topic by classifier.py
-        tag = 'TW-Classified'
-        words = cleaned_tweet.split(' ')
-        for word in words:
-            word = word.lower()
-            if word in self.tags:
-                tag = 'TW-' + word
-                break
-        return tag
