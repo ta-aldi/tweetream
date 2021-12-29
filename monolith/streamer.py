@@ -10,7 +10,7 @@ load_dotenv()
 class Stream(tweepy.Stream):
 
     # Initialize Preprocessor Object
-    def __init__(self, auth, preprocessor, model_path, daemon=False):
+    def __init__(self, auth, preprocessor, model_path, socket, daemon=False):
         super(Stream, self).__init__(
             auth['TW_API_KEY'],
             auth['TW_API_KEY_SECRET'],
@@ -20,6 +20,7 @@ class Stream(tweepy.Stream):
         )
         self.preprocessor = preprocessor
         self.model = load(model_path)
+        self.socket = socket
 
     def filter_raw_data(self, raw_data):
         filtered = {}
@@ -51,7 +52,7 @@ class Stream(tweepy.Stream):
         data = self.filter_raw_data(json.loads(data))
         data['text_cleaned'] = self.preprocessor.run(data['text'])
         data['prediction'] = self.classify(data)
-        print(data)
+        self.socket.emit('message', data, namespace='/topic')
 
     # On Connect event
     def on_connect(self):

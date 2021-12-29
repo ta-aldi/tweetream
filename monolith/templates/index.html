@@ -14,14 +14,8 @@
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">Monolith</span>
             <div class="btn-group">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="defaultDropdown" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                    Choose Topic
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
-                    {% for topic in topics %}
-                        <li><a class="dropdown-item" href="#">{{ topic }}</a></li>
-                    {% endfor %}
-                </ul>
+                <input placeholder="Topic Name" id="new-topic-input">
+                <button class="btn btn-secondary" type="button" id="subs-topic-btn">Subscribe Topic</button>
             </div>
         </div>
     </nav>
@@ -31,5 +25,64 @@
     <div class="container mt-5"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+    <script defer>
+        (
+            function() {
+                let socket = undefined;
+
+                // create a websocket connection to listen to a topic
+                function createWebSocket(topic, namespace='/topic') {
+                    // close any ongoing socket connection
+                    if (socket !== undefined) {
+                        socket.emit('disconnect')
+                    }
+
+                    // Create a socket
+                    socket = io(namespace, {query: `topic=${topic}`})
+                    socket.on('message', function (event) {
+                        const data = event
+
+                        const card = document.createElement("div")
+                        card.classList.add("card")
+                        
+                        const cardHeader = document.createElement("h5")
+                        cardHeader.classList.add("card-header")
+                        cardHeader.innerHTML = data["prediction"]
+
+                        const cardBody = document.createElement("div")
+                        cardBody.classList.add("card-body")
+
+                        const cardUsername = document.createElement("h5")
+                        cardUsername.classList.add("card-title")
+                        cardUsername.innerHTML = data["username"]
+
+                        const cardCreatedAt = document.createElement("p")
+                        cardCreatedAt.classList.add("text-muted")
+                        cardCreatedAt.innerHTML = data["created_at"]
+
+                        const cardTweet = document.createElement("p")
+                        cardTweet.classList.add("card-text")
+                        cardTweet.innerHTML = data["text"]
+
+                        cardBody.appendChild(cardUsername)
+                        cardBody.appendChild(cardCreatedAt)
+                        cardBody.appendChild(cardTweet)
+                        card.appendChild(cardHeader)
+                        card.appendChild(cardBody)
+                        document.getElementsByClassName("container")[0].prepend(card)
+                    })
+                }
+                
+                const topicInput = document.getElementById("new-topic-input")
+                const topicInputSubmit = document.getElementById("subs-topic-btn")
+
+                topicInputSubmit.addEventListener("click", function() {
+                    const newTopic = topicInput.value
+                    createWebSocket(newTopic)
+                })
+            }
+        )();
+    </script>
 </body>
 </html>
