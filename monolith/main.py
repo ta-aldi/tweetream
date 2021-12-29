@@ -13,16 +13,6 @@ def index():
 def connect():
     topic = request.args.get('topic')
     print(topic)
-    emit('message', 'hehe')
-
-    # Create stream object with given credentials
-    global stream
-    stream = Stream(auth, preprocessor, clf_path, socketio)
-    # Streaming filter
-    stream_thread = stream.filter(
-        track=[topic],
-        threaded=True
-    )
 
 @socketio.on('disconnect', namespace='/topic')
 def disconnect_cleanup():
@@ -30,4 +20,13 @@ def disconnect_cleanup():
     disconnect()
 
 if __name__ == '__main__':
+    # Create stream object with given credentials
+    global stream
+    stream = Stream(auth, preprocessor, clf_path, socketio)
+    # Streaming filter
+    stream_thread = stream.filter(
+        track=["jakarta"],
+        threaded=True
+    )
+
     socketio.run(app, host='0.0.0.0', port=8000)
