@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from streamer import Stream, auth, preprocessor
-from config import TweetreamProducer, PRODUCER_CONF, create_topics, delete_topics
+from config import TweetreamProducer, TweetreamConsumer, PRODUCER_CONF, CONSUMER_CONF, create_topics, delete_topics
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -10,8 +10,12 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def setup_streamer():
     global stream
 
-    # Create stream object with given credentials
-    stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF))
+    consumer_config = {
+        **CONSUMER_CONF,
+        'group.id': "mock-twitter-streamer",
+        'default.topic.config': None,
+    }
+    stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF), consumer=TweetreamConsumer(consumer_config))
     # Streaming filter
     stream_thread = stream.filter(
         track=stream.preprocessor.tags,

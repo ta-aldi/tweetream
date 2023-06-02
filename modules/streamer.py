@@ -2,6 +2,8 @@ from dotenv import load_dotenv
 from preprocessor import Preprocessor
 from config import acked
 import os, tweepy, json
+import pytz
+from datetime import datetime
 
 # Load dotenv library
 load_dotenv()
@@ -10,7 +12,7 @@ load_dotenv()
 class Stream(tweepy.Stream):
 
     # Initialize Preprocessor Object
-    def __init__(self, auth, preprocessor, producer, daemon=False):
+    def __init__(self, auth, preprocessor, producer, daemon=False, **kwargs):
         super(Stream, self).__init__(
             auth['TW_API_KEY'],
             auth['TW_API_KEY_SECRET'],
@@ -20,19 +22,70 @@ class Stream(tweepy.Stream):
         )
         self.preprocessor = preprocessor
         self.producer = producer
+        self.consumer = kwargs.get("consumer")
 
-    def filter_raw_data(self, raw_data):
-        filtered = {}
+    def _connect(self, method, endpoint, params=None, headers=None, body=None):
+        self.running = True
+
+        error_count = 0
+        # https://developer.twitter.com/en/docs/twitter-api/v1/tweets/filter-realtime/guides/connecting
+        stall_timeout = 90
+        network_error_wait = network_error_wait_step = 0.25
+        network_error_wait_max = 16
+        http_error_wait = http_error_wait_start = 5
+        http_error_wait_max = 320
+        http_420_error_wait_start = 60
+
+        self.consumer.subscribe(['raw'])
 
         try:
-            filtered['created_at'] = raw_data['created_at']
-        except KeyError:
-            filtered['created_at'] = 'No Date Specified'
+            while self.running and error_count <= self.max_retries:
+                try:
+                    self.on_connect()
+                    msg = self.consumer.poll(1.0)
 
-        try:
-            filtered['text'] = raw_data['text']
-        except KeyError:
-            filtered['text'] = 'No Tweet'
+                    if msg is None:
+                        error_count = 0
+                        http_error_wait = http_error_wait_start
+                        network_error_wait = network_error_wait_step
+
+                        if not self.running:
+                            break
+
+                        continue
+
+                    if msg.error():
+                        self.on_connection_error(msg.error())
+                        error_count += 1
+
+                        if not self.running:
+                            break
+
+                        continue
+
+                    error_count = 0
+                    http_error_wait = http_error_wait_start
+                    network_error_wait = network_error_wait_step
+
+                    self.on_data(msg.value())
+
+                except Exception as e:
+                    self.on_connection_error()
+                    if not self.running:
+                        break
+
+                    sleep(network_error_wait)
+
+                    network_error_wait += network_error_wait_step
+                    if network_error_wait > network_error_wait_max:
+                        network_error_wait = network_error_wait_max
+
+        except Exception as exc:
+            self.on_exception(exc)
+
+        finally:
+            self.running = False
+            self.on_disconnect()
 
     def filter_raw_data(self, raw_data):
         filtered = {
@@ -40,6 +93,7 @@ class Stream(tweepy.Stream):
             "author": raw_data.get("author", "-No Author Found-"),
             "link": raw_data.get("link", "-No Link Found-"),
             "created_at": raw_data.get("created_at", "-No Created At Found-"),
+            "received_at": datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f"),
         }
 
         return filtered
@@ -48,7 +102,9 @@ class Stream(tweepy.Stream):
     def on_data(self, raw_data):
         data = raw_data.decode('utf-8')
         data = self.filter_raw_data(json.loads(data))
+
         data['text_cleaned'] = self.preprocessor.run(data['text'])
+        data['preprocessed_at'] = datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
         data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
         data = json.dumps(data)
         self.producer.produce('TWT-Cleaned', data.encode('utf-8'), callback=acked)
