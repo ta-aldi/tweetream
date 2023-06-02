@@ -1,6 +1,8 @@
 **/.env
 **/env
 **/__pycache__
-**/*.joblib
+# **/*.joblib
 **/bin
 **/vendor
+venv
+.vscode
