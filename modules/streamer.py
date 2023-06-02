@@ -34,11 +34,14 @@ class Stream(tweepy.Stream):
         except KeyError:
             filtered['text'] = 'No Tweet'
 
-        try:
-            filtered['username'] = raw_data['user']['screen_name']
-        except:
-            filtered['username'] = 'No Username (Anonymous)'
-            
+    def filter_raw_data(self, raw_data):
+        filtered = {
+            "text": raw_data.get("text", "-No Text Found-"),
+            "author": raw_data.get("author", "-No Author Found-"),
+            "link": raw_data.get("link", "-No Link Found-"),
+            "created_at": raw_data.get("created_at", "-No Created At Found-"),
+        }
+
         return filtered
 
     # Process the text of any tweet that comes from the Twitter API
