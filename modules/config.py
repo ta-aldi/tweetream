@@ -41,11 +41,14 @@ class TweetreamConsumer(Consumer):
     def __init__(self, config):
         super(TweetreamConsumer, self).__init__(config)
 
-    def listen(self, processor):
+    def listen(self, processor, on_wait=None):
         while True:
             msg = self.poll(1.0)
 
             if msg is None:
+                if on_wait is not None:
+                    on_wait()
+
                 continue
             if msg.error():
                 print("Consumer error: {}".format(msg.error()))
