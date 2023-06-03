@@ -27,7 +27,7 @@ GROUP_ID = os.getenv('GROUP_ID')
 CONSUMER_CONF = {
     'bootstrap.servers': BOOTSTRAP_SERVERS,
     'group.id': GROUP_ID,
-    'default.topic.config': {'auto.offset.reset': 'smallest'}
+    # 'default.topic.config': {'auto.offset.reset': 'smallest'}
 }
 PRODUCER_CONF = {
     'bootstrap.servers': BOOTSTRAP_SERVERS,
