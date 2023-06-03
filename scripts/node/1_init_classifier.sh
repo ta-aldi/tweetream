@@ -7,24 +7,23 @@ sudo apt-get install -y python3-pip python3-dev librdkafka-dev
 # 1. create classifier service file
 CLSSFRSERVICE=/etc/systemd/system/classifier.service
 TWEETREAM=/home/$USER/tweetream
+rm -rf $CLSSFRSERVICE
 if [ -f $CLSSFRSERVICE ]; then
     echo "$CLSSFRSERVICE found."
 else
-    touch $CLSSFRSERVICE
+    sudo cat << EOF | sudo tee $CLSSFRSERVICE
+[Unit]
+Description=Classifier Service
+Requires=network.target
+After=network.target
 
-    echo "[Unit]" >> $CLSSFRSERVICE
-    echo "Description=Classifier Service" >> $CLSSFRSERVICE
-    echo "Requires=network.target" >> $CLSSFRSERVICE
-    echo "After=network.target" >> $CLSSFRSERVICE
-    echo "" >> $CLSSFRSERVICE
+[Service]
+Type=simple
+ExecStart=bash $TWEETREAM/scripts/node/classifier.sh
 
-    echo "[Service]" >> $CLSSFRSERVICE
-    echo "Type=simple" >> $CLSSFRSERVICE
-    echo "ExecStart=bash $TWEETREAM/scripts/node/classifier.sh" >> $CLSSFRSERVICE
-    echo "" >> $CLSSFRSERVICE
-
-    echo "[Install]" >> $CLSSFRSERVICE
-    echo "WantedBy=default.target" >> $CLSSFRSERVICE
+[Install]
+WantedBy=default.target
+EOF
 
     echo "$CLSSFRSERVICE created."
 fi

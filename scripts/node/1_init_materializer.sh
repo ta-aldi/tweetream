@@ -7,26 +7,23 @@ sudo apt-get install -y python3-pip python3-dev librdkafka-dev
 # 1. create materializer service file
 MTRLZSERVICE=/etc/systemd/system/materializer.service
 TWEETREAM=/home/$USER/tweetream
+rm -rf 
 if [ -f $MTRLZSERVICE ]; then
     echo "$MTRLZSERVICE found."
 else
-    touch $MTRLZSERVICE
+    sudo cat << EOF | sudo tee $MTRLZSERVICE
+[Unit]
+Description=Materializer Service
+Requires=network.target
+After=network.target
 
-    echo "[Unit]" >> $MTRLZSERVICE
-    echo "Description=Materializer Service" >> $MTRLZSERVICE
-    echo "Requires=network.target" >> $MTRLZSERVICE
-    echo "After=network.target" >> $MTRLZSERVICE
-    echo "" >> $MTRLZSERVICE
+[Service]
+Type=simple
+ExecStart=bash $TWEETREAM/scripts/node/materializer.sh
 
-    echo "[Service]" >> $MTRLZSERVICE
-    echo "Type=simple" >> $MTRLZSERVICE
-    echo "ExecStart=bash $TWEETREAM/scripts/node/materializer.sh" >> $MTRLZSERVICE
-    echo "" >> $MTRLZSERVICE
-
-    echo "[Install]" >> $MTRLZSERVICE
-    echo "WantedBy=default.target" >> $MTRLZSERVICE
-
-    echo "$MTRLZSERVICE created."
+[Install]
+WantedBy=default.target
+EOF
 fi
 sudo systemctl start materializer
 sudo systemctl enable materializer
