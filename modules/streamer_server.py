@@ -13,7 +13,6 @@ def setup_streamer():
     consumer_config = {
         **CONSUMER_CONF,
         'group.id': "mock-twitter-streamer",
-        'default.topic.config': None,
     }
     stream = Stream(auth, preprocessor, TweetreamProducer(PRODUCER_CONF), consumer=TweetreamConsumer(consumer_config))
     # Streaming filter
@@ -72,4 +71,4 @@ def index():
 
 if __name__ == '__main__':
     setup_streamer()
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)
