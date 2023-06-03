@@ -95,6 +95,7 @@ class Stream(tweepy.Stream):
             "created_at": raw_data.get("created_at", "-No Created At Found-"),
             "injected_to_raw_at": raw_data.get("injected_to_raw_at", datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f")),
             "consumed_from_raw_at": datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "extras": raw_data.get("extras", {}),
         }
 
         return filtered
