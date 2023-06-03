@@ -37,11 +37,11 @@ class Stream(tweepy.Stream):
         http_420_error_wait_start = 60
 
         self.consumer.subscribe(['raw'])
+        self.on_connect()
 
         try:
             while self.running and error_count <= self.max_retries:
                 try:
-                    self.on_connect()
                     msg = self.consumer.poll(1.0)
 
                     if msg is None:
@@ -93,7 +93,8 @@ class Stream(tweepy.Stream):
             "author": raw_data.get("author", "-No Author Found-"),
             "link": raw_data.get("link", "-No Link Found-"),
             "created_at": raw_data.get("created_at", "-No Created At Found-"),
-            "received_at": datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "injected_to_raw_at": raw_data.get("injected_to_raw_at", datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f")),
+            "consumed_from_raw_at": datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f"),
         }
 
         return filtered
@@ -103,9 +104,9 @@ class Stream(tweepy.Stream):
         data = raw_data.decode('utf-8')
         data = self.filter_raw_data(json.loads(data))
 
-        data['text_cleaned'] = self.preprocessor.run(data['text'])
-        data['preprocessed_at'] = datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
-        data['tag'] = self.preprocessor.add_tag(data['text_cleaned'])
+        data['preprocessed_text'] = self.preprocessor.run(data['text'])
+        data['tag'] = self.preprocessor.add_tag(data['preprocessed_text'])
+        data['injected_to_preprocessed_at'] = datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
         data = json.dumps(data)
         self.producer.produce('TWT-Cleaned', data.encode('utf-8'), callback=acked)
         self.producer.flush()
