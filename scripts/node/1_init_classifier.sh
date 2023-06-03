@@ -1,11 +1,12 @@
 #!/bin/bash
 # Created by Michael Susanto (@michaelsusanto81)
+# Adjusted by Aldi Naufal Fitrah
 
 sudo apt-get install -y python3-pip python3-dev librdkafka-dev
 
 # 1. create classifier service file
 CLSSFRSERVICE=/etc/systemd/system/classifier.service
-TWEETREAM=/home/michael/tweetream
+TWEETREAM=/home/$USER/tweetream
 if [ -f $CLSSFRSERVICE ]; then
     echo "$CLSSFRSERVICE found."
 else
