@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TWEETREAM=/home/$USER/tweetream
+TWEETREAM=/home/aldi_naufal/tweetream
 
 cd $TWEETREAM
 pip3 install -r modules/requirements.txt
