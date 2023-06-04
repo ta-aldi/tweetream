@@ -25,6 +25,7 @@ class Classifier():
 
         str_data = json.dumps(data)
         self.producer.produce(data['tag'], str_data.encode('utf-8'), callback=acked)
+        self.producer.flush()
 
     def listen(self):
         self.consumer.listen(self.run)
