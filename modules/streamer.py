@@ -110,7 +110,7 @@ class Stream(tweepy.Stream):
         data['injected_to_preprocessed_at'] = datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
         data = json.dumps(data)
         self.producer.produce('TWT-Cleaned', data.encode('utf-8'), callback=acked)
-        self.producer.flush()
+        self.producer.poll(0)
 
     # On Connect event
     def on_connect(self):
